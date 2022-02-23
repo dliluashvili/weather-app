@@ -7,7 +7,7 @@ export class WeatherController {
     constructor(private weatherService: WeatherService) {}
 
     @Post('/get')
-    getWeather(@Body() weatherDto: WeatherDto) {
+    getWeather(@Body() weatherDto: WeatherDto){
         return this.weatherService.getWeather(weatherDto)
     }
 }

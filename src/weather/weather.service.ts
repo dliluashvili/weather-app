@@ -1,4 +1,4 @@
-import { HttpService, Injectable } from '@nestjs/common'
+import { HttpService, Injectable, NotFoundException } from '@nestjs/common'
 import { map } from 'rxjs/operators'
 import * as moment from 'moment'
 import { WeatherDto } from './weather.dto'
@@ -17,7 +17,7 @@ export class WeatherService {
             .pipe(
                 map((response) => response.data.daily),
                 map((daily) => {
-                    const item = daily.find((dItem) => {
+                    return daily.find((dItem) => {
                         const itemDate = moment(
                             new Date(dItem.dt * 1000)
                         ).format('YYYY-MM-DD')
@@ -26,10 +26,14 @@ export class WeatherService {
                             return dItem
                         }
                     })
-
-                    return {
-                        description: item.weather[0].description,
+                }),
+                map((item) => {
+                    if (item && item.weather && item.weather.length > 0) {
+                        return {
+                            description: item.weather[0].description,
+                        }
                     }
+                    throw new NotFoundException()
                 })
             )
     }
