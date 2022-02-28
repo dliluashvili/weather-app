@@ -1,14 +1,19 @@
-import { HttpService, Injectable, NotFoundException } from '@nestjs/common'
-import { map } from 'rxjs/operators'
+import { HttpException, HttpService, Injectable } from '@nestjs/common'
+import { catchError, map } from 'rxjs/operators'
 import * as moment from 'moment'
 import { WeatherDto } from './weather.dto'
+import { Observable } from 'rxjs'
+import { WeatherNotFoundException } from './weather-not-found.exception'
+import { WeatherResponse } from './weather.response'
 
 @Injectable()
 export class WeatherService {
     constructor(private httpService: HttpService) {}
 
-    getWeather(weatherDto: WeatherDto) {
-        const date = moment(new Date(`${weatherDto.date}`)).format('YYYY-MM-DD')
+    getWeather(weatherDto: WeatherDto): Observable<WeatherResponse> {
+        const date: string = moment(new Date(`${weatherDto.date}`)).format(
+            'YYYY-MM-DD'
+        )
 
         return this.httpService
             .get(
@@ -18,7 +23,7 @@ export class WeatherService {
                 map((response) => response.data.daily),
                 map((daily) => {
                     return daily.find((dItem) => {
-                        const itemDate = moment(
+                        const itemDate: string = moment(
                             new Date(dItem.dt * 1000)
                         ).format('YYYY-MM-DD')
 
@@ -33,7 +38,14 @@ export class WeatherService {
                             description: item.weather[0].description,
                         }
                     }
-                    throw new NotFoundException()
+
+                    throw new WeatherNotFoundException(date)
+                }),
+                catchError((err: any) => {
+                    throw new HttpException(
+                        err.response.message,
+                        err.response.statusCode
+                    )
                 })
             )
     }
