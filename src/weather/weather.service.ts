@@ -1,4 +1,5 @@
-import { HttpException, HttpService, Injectable } from '@nestjs/common'
+import { HttpException, Injectable } from '@nestjs/common'
+import { HttpService } from '@nestjs/axios'
 import { catchError, map } from 'rxjs/operators'
 import * as moment from 'moment'
 import { WeatherDto } from './weather.dto'
@@ -8,12 +9,10 @@ import { WeatherResponse } from './weather.response'
 
 @Injectable()
 export class WeatherService {
-    constructor(private httpService: HttpService) {}
+    constructor(private readonly httpService: HttpService) {}
 
     getWeather(weatherDto: WeatherDto): Observable<WeatherResponse> {
-        const date: string = moment(new Date(`${weatherDto.date}`)).format(
-            'YYYY-MM-DD'
-        )
+        const date = moment(new Date(`${weatherDto.date}`)).format('YYYY-MM-DD')
 
         return this.httpService
             .get(
