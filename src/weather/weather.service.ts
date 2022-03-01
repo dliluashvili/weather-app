@@ -5,14 +5,13 @@ import * as moment from 'moment'
 import { WeatherNotFoundException } from './weather-not-found.exception'
 import { map, catchError } from 'rxjs/operators'
 import { Observable } from 'rxjs'
-import { AxiosResponse } from 'axios'
-import { Weather } from './weather.entity'
+import { WeatherResponse } from './weather.response'
 
 @Injectable()
 export class WeatherService {
     constructor(private readonly httpService: HttpService) {}
 
-    getWeather(weatherDto: WeatherDto): Observable<Weather> {
+    getWeather(weatherDto: WeatherDto): Observable<WeatherResponse> {
         const { date } = weatherDto
         const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${weatherDto.lat}&lon=${weatherDto.lng}&cnt=7&appid=${process.env.API_KEY}`
 
