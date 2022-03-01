@@ -1,15 +1,20 @@
-import { IsDate, IsDateString, IsNotEmpty, IsNumber } from 'class-validator'
+import { Field, InputType } from '@nestjs/graphql'
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator'
 
+@InputType()
 export class WeatherDto {
     @IsNumber()
     @IsNotEmpty()
+    @Field()
     lat: number
 
     @IsNumber()
     @IsNotEmpty()
+    @Field()
     lng: number
 
-    @IsDateString()
+    @IsString()
     @IsNotEmpty()
-    date: Date
+    @Field()
+    date: string
 }

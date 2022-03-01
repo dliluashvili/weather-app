@@ -1,0 +1,17 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Weather {
+  description: String!
+}
+
+type Query {
+  weathers(input: WeatherDto!): Weather!
+}
+
+input WeatherDto {
+  lat: Float!
+  lng: Float!
+  date: String!
+}
